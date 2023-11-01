@@ -1,33 +1,17 @@
-import { NavLink } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import Header from "./Header";
+import Nav from "./Nav";
+import Footer from "./Footer";
 
-const Nav = ({ search, setSearch }) => {
+const HomeLayout = ({search, setSearch}) => {
   return (
-    <nav className="Nav">
-      <form className="searchForm" onSubmit={(e) => e.preventDefault()}>
-        <label htmlFor="search">Search Post</label>
-
-        <input
-          type="text"
-          id="search"
-          placeholder="search posts"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </form>
-
-      <ul>
-        <li>
-          <NavLink to="/">Home</NavLink>
-        </li>
-        <li>
-          <NavLink to="/post">Post</NavLink>
-        </li>
-        <li>
-          <NavLink to="/about">About</NavLink>
-        </li>
-      </ul>
-    </nav>
+    <div className="App">
+      <Header title="DLT Student Blog" />
+      <Nav  search={search} setSearch={setSearch}  />
+      <Outlet />
+      <Footer />
+    </div>
   );
 };
 
-export default Nav;
+export default HomeLayout;
