@@ -1,10 +1,9 @@
-import React from 'react'
-
 const About = () => {
   return (
-    <div>
-      About
-    </div>
+     <main className="About">
+      <h2>About</h2>
+      <p style={{marginTop: "2rem" }}>This app is a partof react lesson of DLT of Africa</p>
+     </main>
   )
 }
 

@@ -1,55 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-
+import { format } from "date-fns";
 import Home from "./Home";
 import NewPost from "./NewPost";
 import PostPage from "./PostPage";
 import Missing from "./Missing";
 import About from "./About";
 import HomeLayout from "./HomeLayout";
+import Post from "./Post";
 
 const App = () => {
-  const [search, setSearch] = useState("");
-  const [searchResult, setSearchResult] = useState([]);
-  const [postTitle, setpostTitle] = useState("");
-  const [postBody, setpostBody] = useState("");
-
   const [posts, setPosts] = useState([
     {
       id: 1,
-      title: "Rocco",
-      date: "July 01, 2021 11:17:36 AM",
-      body: "Lorem ipsum dolor sit amet, consectetur adipisicing elit  Repudiandae accusamus nihil laudantium unde doloribus ipsam perferendis  Repudiandae accusamus nihil laudantium unde doloribus ipsam perferendis",
+      title: "Kanas",
+      date: "March 30, 2000 11:17:36 AM",
+      body: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Incidunt, quasi quidem. Temporibus perferendis asperiores a debitis! Sapiente minima quibusdam animi vero suscipit mollitia cupiditate impedit veritatis. Iste possimus vitae placeat.",
     },
     {
       id: 2,
-      title: "Kanas",
-      date: "June 19, 2021 12:17:36 AM",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam adipisci nihil nemo obcaecati minima nisi iure ab aut quo similique.",
+      title: "Supreme",
+      date: "July 09, 1998 09:45:30 AM",
+      body: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Incidunt, quasi quidem. Temporibus perferendis asperiores a debitis! Sapiente minima quibusdam animi vero suscipit mollitia cupiditate impedit veritatis. Iste possimus vitae placeat.",
     },
     {
       id: 3,
-      title: "Mohamed",
-      date: "September 21, 2026 11:17:36 AM",
-      body: "Lorem ipsum dolor sit amet, consectetur adipisicing elit  Repudiandae accusamus nihil laudantium unde doloribus ipsam perferendis consectetur adipisicing elit  Repudiandae accusamus nihil laudantium unde doloribus ipsam perferendis  Repudiandae accusamus nihil laudantium unde doloribus ipsam perferendis",
+      title: "Rocco",
+      date: "August 25, 2001 15:25:09 PM",
+      body: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Incidunt, quasi quidem. Temporibus perferendis asperiores a debitis! Sapiente minima quibusdam animi vero suscipit mollitia cupiditate impedit veritatis. Iste possimus vitae placeat.",
     },
     {
       id: 4,
-      title: "Muaz",
-      date: "August 03, 2025 13:34:36 PM",
-      body: "Lorem ipsum dolor sit amet, consectetur adipisicing elit  Repudiandae accusamus nihil laudantium unde doloribus ipsam perferendis  Repudiandae accusamus nihil laudantium unde doloribus ipsam perferendis Lorem ipsum dolor sit amet, consectetur adipisicing elit  Repudiandae accusamus nihil laudantium unde doloribus ipsam perferendis  Repudiandae accusamus nihil laudantium unde doloribus ipsam perferendis",
+      title: "Hollar",
+      date: "November 20, 2000 10:33:45 AM",
+      body: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Incidunt, quasi quidem. Temporibus perferendis asperiores a debitis! Sapiente minima quibusdam animi vero suscipit mollitia cupiditate impedit veritatis. Iste possimus vitae placeat.",
     },
   ]);
+
+  const [search, setSearch] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [postTitle, setPostTitle] = useState("");
+  const [postBody, setPostBody] = useState("");
+
+  useEffect(() => {
+    const filterResult = posts.filter(
+      (post) =>
+        post.body.toLocaleLowerCase().includes(search.toLowerCase()) ||
+        post.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setSearchResult(filterResult.reverse());
+  }, [posts, search]);
 
   const navigate = useNavigate();
 
   const handleDelete = (id) => {
-    const postList = posts.filter((post) => post.id !== id);
-    setPosts(postList);
+    const postLists = posts.filter((post) => post.id !== id);
+    setPosts(postLists);
     navigate("/");
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
+    const date = format(new Date(), "MMMM dd, yyyy pp");
+    const newPost = { id, title: postTitle, date, body: postBody };
+    const allPost = [...posts, newPost];
+    setPosts(allPost);
+    setPostTitle("");
+    setPostBody("");
+    navigate("/");
   };
 
   return (
@@ -58,20 +77,21 @@ const App = () => {
         path="/"
         element={<HomeLayout search={search} setSearch={setSearch} />}
       >
-        <Route index element={<Home posts={posts} />} />
+        <Route index element={<Home posts={searchResult} />} />
         <Route path="/post">
           <Route
             index
             element={
               <NewPost
                 postTitle={postTitle}
-                setpostTitle={setpostTitle}
+                setPostTitle={setPostTitle}
                 postBody={postBody}
-                setpostBody={setpostBody}
+                setPostBody={setPostBody}
                 handleSubmit={handleSubmit}
               />
             }
           />
+
           <Route
             path=":id"
             element={<PostPage posts={posts} handleDelete={handleDelete} />}
