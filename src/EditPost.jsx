@@ -33,7 +33,7 @@ const EditPost = ({ posts, handleEdit, editBody, editTitle, setEditBody, setEdit
                             onChange={(e) => setEditBody(e.target.value)}>
 
                         </textarea>
-                        <button type="submit" onClick={() => handleEdit}>Submit</button>
+                        <button type="submit" onClick={() => handleEdit(post.id)}>Submit</button>
                     </form>
                 </>
             }
