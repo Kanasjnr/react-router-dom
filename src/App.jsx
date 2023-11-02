@@ -7,10 +7,10 @@ import PostPage from "./PostPage";
 import Missing from "./Missing";
 import About from "./About";
 import HomeLayout from "./HomeLayout";
-import Post from "./Post";
+import api from "./api/posts";
 
 const App = () => {
-  const [posts, setPosts] = useState([ ]);
+  const [posts, setPosts] = useState([]);
 
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -20,63 +20,105 @@ const App = () => {
   useEffect(() => {
     const filterResult = posts.filter(
       (post) =>
-        post.body.toLocaleLowerCase().includes(search.toLowerCase()) ||
+        post.body.toLowerCase().includes(search.toLowerCase()) ||
         post.title.toLowerCase().includes(search.toLowerCase())
     );
     setSearchResult(filterResult.reverse());
   }, [posts, search]);
 
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await api.get('/posts')
+        setPosts(response.data)
+      } catch (error) {
+        if (error.message) {
+          console.log(error.message.data);
+          console.log(error.message.status);
+          console.log(error.message.headers);
+        } else {
+          console.log(`Error: ${error.message}`);
+        }
+      }
+    }
+    fetchPost()
+  }, [])
+
   const navigate = useNavigate();
 
-  const handleDelete = (id) => {
-    const postLists = posts.filter((post) => post.id !== id);
-    setPosts(postLists);
-    navigate("/");
+  const handleDelete = async (id) => {
+
+    try {
+      await api.delete(`/posts/${id}`);
+      const postLists = posts.filter((post) => post.id !== id);
+      setPosts(postLists);
+      navigate("/");
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
+    }
+
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
-    const date = format(new Date(), "MMMM dd, yyyy pp");
-    const newPost = { id, title: postTitle, date, body: postBody };
-    const allPost = [...posts, newPost];
+
+
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
+  const date = format(new Date(), "MMMM dd, yyyy pp");
+  const newPost = { id, title: postTitle, date, body: postBody };
+  try {
+    const response = await api.post('/posts', newPost)
+    const allPost = [...posts, response.data];
     setPosts(allPost);
     setPostTitle("");
     setPostBody("");
     navigate("/");
-  };
+  } catch (error) {
+    console.log(`Error: ${error.message}`);
+  }
 
-  return (
-    <Routes>
-      <Route
-        path="/"
-        element={<HomeLayout search={search} setSearch={setSearch} />}
-      >
-        <Route index element={<Home posts={searchResult} />} />
-        <Route path="/post">
-          <Route
-            index
-            element={
-              <NewPost
-                postTitle={postTitle}
-                setPostTitle={setPostTitle}
-                postBody={postBody}
-                setPostBody={setPostBody}
-                handleSubmit={handleSubmit}
-              />
-            }
-          />
+};
 
-          <Route
-            path=":id"
-            element={<PostPage posts={posts} handleDelete={handleDelete} />}
-          />
-        </Route>
-        <Route path="/about" element={<About />} />
-        <Route path="*" element={<Missing />} />
+
+const handleEdit = async(id) => {
+  const date = format(new Date(), "MMMM dd, yyyy pp");
+  const newPost = { id, title: postTitle, date, body: postBody };
+}
+
+
+return (
+  <Routes>
+    <Route
+      path="/"
+      element={<HomeLayout search={search} setSearch={setSearch} />}
+    >
+      <Route index element={<Home posts={searchResult} />} />
+      <Route path="/post">
+        <Route
+          index
+          element={
+            <NewPost
+              postTitle={postTitle}
+              setPostTitle={setPostTitle}
+              postBody={postBody}
+              setPostBody={setPostBody}
+              handleSubmit={handleSubmit}
+            />
+          }
+        />
+
+        <Route
+          path=":id"
+          element={<PostPage posts={posts} handleDelete={handleDelete} />}
+        />
       </Route>
-    </Routes>
-  );
+      <Route path="/about" element={<About />} />
+      <Route path="*" element={<Missing />} />
+    </Route>
+  </Routes>
+);
 };
 
 export default App;
