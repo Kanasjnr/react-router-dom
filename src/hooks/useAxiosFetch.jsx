@@ -30,11 +30,16 @@ const useAxiosFetch = (dataUrl) => {
                     setData([])
                 }
             } finally {
-
+                isMounted && setIsLoading(false)
             }
         }
+        fetchData(dataUrl)
 
-    }, [])
+        const cleanUp = () => {
+            isMounted = false
+            
+        }
+    })
     return (
         <>
 
