@@ -5,7 +5,7 @@ import Feed  from "./Feed"
 const Home = ({ posts, fetchError,isLoading}) => {
   return (
     <main className="Home">
-     {isLoading && <p className="statusMessage"></p>}
+     {isLoading && <p className="statusMsg"></p>}
     </main>
   )
 }
