@@ -108,7 +108,8 @@ useEffect(() =>{
         path="/"
         element={<HomeLayout search={search} setSearch={setSearch} width={width} />}
       >
-        <Route index element={<Home posts={searchResult} />} />
+        <Route index element={<Home posts={searchResult}  fetchError={fetchError} isLoading={isLoading}/>}
+         />
         <Route path="/post">
           <Route
             index
