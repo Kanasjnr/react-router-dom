@@ -12,6 +12,7 @@ import EditPost from "./EditPost";
 import UseWindowSize from "./hooks/useWindowSize";
 import useAxiosFetch from "./hooks/useAxiosFetch";
 
+
 const App = () => {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
@@ -25,32 +26,32 @@ const App = () => {
   const { width } = UseWindowSize()
 
 
-  useEffect(() => {
-    const filterResult = posts.filter(
-      (post) =>
-        post.body.toLocaleLowerCase().includes(search.toLowerCase()) ||
-        post.title.toLowerCase().includes(search.toLowerCase())
-    );
-    setSearchResult(filterResult.reverse());
-  }, [posts, search]);
+  // useEffect(() => {
+  //   const filterResult = posts.filter(
+  //     (post) =>
+  //       post.body.toLocaleLowerCase().includes(search.toLowerCase()) ||
+  //       post.title.toLowerCase().includes(search.toLowerCase())
+  //   );
+  //   setSearchResult(filterResult.reverse());
+  // }, [posts, search]);
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const response = await api.get("/posts");
-        setPosts(response.data);
-      } catch (error) {
-        if (error.message) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else {
-          console.log(`Error: ${error.message}`);
-        }
-      }
-    };
-    fetchPost();
-  }, []);
+  // useEffect(() => {
+  //   const fetchPost = async () => {
+  //     try {
+  //       const response = await api.get("/posts");
+  //       setPosts(response.data);
+  //     } catch (error) {
+  //       if (error.message) {
+  //         console.log(error.response.data);
+  //         console.log(error.response.status);
+  //         console.log(error.response.headers);
+  //       } else {
+  //         console.log(`Error: ${error.message}`);
+  //       }
+  //     }
+  //   };
+  //   fetchPost();
+  // }, []);
 
   const navigate = useNavigate();
 
