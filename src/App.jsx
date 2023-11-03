@@ -25,14 +25,14 @@ const App = () => {
   const { width } = UseWindowSize()
 
 
-  // useEffect(() => {
-  //   const filterResult = posts.filter(
-  //     (post) =>
-  //       post.body.toLocaleLowerCase().includes(search.toLowerCase()) ||
-  //       post.title.toLowerCase().includes(search.toLowerCase())
-  //   );
-  //   setSearchResult(filterResult.reverse());
-  // }, [posts, search]);
+  useEffect(() => {
+    const filterResult = posts.filter(
+      (post) =>
+        post.body.toLocaleLowerCase().includes(search.toLowerCase()) ||
+        post.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setSearchResult(filterResult.reverse());
+  }, [posts, search]);
 
   useEffect(() => {
     const fetchPost = async () => {
