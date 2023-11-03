@@ -25,7 +25,9 @@ const App = () => {
 
 
   const { data, fetchError, isLoading } = useAxiosFetch('http://localhost:3000/posts')
-
+useEffect(() =>{
+  setPosts(data)
+},[])
 
   useEffect(() => {
     const filterResult = posts.filter(
