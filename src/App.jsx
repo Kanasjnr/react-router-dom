@@ -13,10 +13,6 @@ import UseWindowSize from "./hooks/useWindowSize";
 import useAxiosFetch from "./hooks/useAxiosFetch";
 
 
-const [data, fetchError, isLoading]
-
-
-
 const App = () => {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
@@ -25,9 +21,10 @@ const App = () => {
   const [postBody, setPostBody] = useState("");
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
-
-
   const { width } = UseWindowSize()
+
+
+  const { data, fetchError, isLoading } = useAxiosFetch('http://localhost:3000/posts')
 
 
   useEffect(() => {
