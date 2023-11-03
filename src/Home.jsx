@@ -2,7 +2,7 @@ import Feed  from "./Feed"
 
 
 
-const Home = ({ posts}) => {
+const Home = ({ posts, fetchError}) => {
   return (
     <main className="Home">
       {posts.length ? (
