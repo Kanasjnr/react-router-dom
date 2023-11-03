@@ -9,6 +9,7 @@ import About from "./About";
 import HomeLayout from "./HomeLayout";
 import api from "./api/posts";
 import EditPost from "./EditPost";
+import useWindowSize from "./hooks/useWindowSize";
 
 const App = () => {
   const navigate = useNavigate();
@@ -48,6 +49,10 @@ const App = () => {
       console.log(`Error: ${err.message}`);
     }
   };
+
+
+  const {width} = useWindowSize()
+
 
   useEffect(() => {
     const filterResult = posts.filter(
@@ -97,7 +102,7 @@ const App = () => {
     <Routes>
       <Route
         path=""
-        element={<HomeLayout search={search} setSearch={setSearch} />}
+        element={<HomeLayout search={search} setSearch={setSearch}  width={width}/>}
       >
         <Route index element={<Home posts={searchResult} />} />
         <Route path="/post">
