@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { useState, useEffect } from "react";
 import Home from "./Home";
 import NewPost from "./NewPost";
 import PostPage from "./PostPage";
@@ -9,9 +9,48 @@ import About from "./About";
 import HomeLayout from "./HomeLayout";
 import api from "./api/posts";
 import EditPost from "./EditPost";
-import useWindowSize from "./hooks/useWindowSize";
+import UseWindowSize from "./hooks/useWindowSize";
 
 const App = () => {
+  const [posts, setPosts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [postTitle, setPostTitle] = useState("");
+  const [postBody, setPostBody] = useState("");
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
+
+
+  const { width } = UseWindowSize()
+
+
+  useEffect(() => {
+    const filterResult = posts.filter(
+      (post) =>
+        post.body.toLocaleLowerCase().includes(search.toLowerCase()) ||
+        post.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setSearchResult(filterResult.reverse());
+  }, [posts, search]);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await api.get("/posts");
+        setPosts(response.data);
+      } catch (error) {
+        if (error.message) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else {
+          console.log(`Error: ${error.message}`);
+        }
+      }
+    };
+    fetchPost();
+  }, []);
+
   const navigate = useNavigate();
 
   const handleDelete = async (id) => {
@@ -20,18 +59,10 @@ const App = () => {
       const postLists = posts.filter((post) => post.id !== id);
       setPosts(postLists);
       navigate("/");
-    } catch (err) {
-      console.log(`Error: ${err.message}`);
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
     }
   };
-
-  const [posts, setPosts] = useState([]);
-  const [search, setSearch] = useState("");
-  const [searchResult, setSearchResult] = useState([]);
-  const [postTitle, setPostTitle] = useState("");
-  const [postBody, setPostBody] = useState("");
-  const [editTitle, setEditTitle] = useState("");
-  const [editBody, setEditBody] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,42 +76,10 @@ const App = () => {
       setPostTitle("");
       setPostBody("");
       navigate("/");
-    } catch (err) {
-      console.log(`Error: ${err.message}`);
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
     }
   };
-
-
-  const {width} = useWindowSize()
-
-
-  useEffect(() => {
-    const filterResult = posts.filter(
-      (post) =>
-        post.body.toLowerCase().includes(search.toLowerCase()) ||
-        post.title.toLowerCase().includes(search.toLowerCase())
-    );
-
-    setSearchResult(filterResult.reverse());
-  }, [posts, search]);
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const response = await api.get("/posts");
-        setPosts(response.data);
-      } catch (err) {
-        if (err.message) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        } else {
-          console.log(`Error: ${err.message}`);
-        }
-      }
-    };
-    fetchPost();
-  }, []);
 
   const handleEdit = async (id) => {
     const date = format(new Date(), "MMMM dd, yyyy pp");
@@ -93,16 +92,16 @@ const App = () => {
       setEditTitle("");
       setEditBody("");
       navigate("/");
-    } catch (err) {
-      console.log(`Error: ${err.message}`);
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
     }
   };
 
   return (
     <Routes>
       <Route
-        path=""
-        element={<HomeLayout search={search} setSearch={setSearch}  width={width}/>}
+        path="/"
+        element={<HomeLayout search={search} setSearch={setSearch} width = {width} />}
       >
         <Route index element={<Home posts={searchResult} />} />
         <Route path="/post">
@@ -114,16 +113,16 @@ const App = () => {
                 setPostTitle={setPostTitle}
                 postBody={postBody}
                 setPostBody={setPostBody}
-                handleSumit={handleSubmit}
+                handleSubmit={handleSubmit}
               />
             }
           />
+
           <Route
             path=":id"
             element={<PostPage posts={posts} handleDelete={handleDelete} />}
           />
         </Route>
-
         <Route
           path="/edit/:id"
           element={
@@ -131,13 +130,12 @@ const App = () => {
               posts={posts}
               handleEdit={handleEdit}
               editTitle={editTitle}
-              setEditTitle={setEditTitle}
               editBody={editBody}
               setEditBody={setEditBody}
+              setEditTitle={setEditTitle}
             />
           }
         />
-
         <Route path="/about" element={<About />} />
         <Route path="*" element={<Missing />} />
       </Route>
