@@ -12,6 +12,11 @@ import EditPost from "./EditPost";
 import UseWindowSize from "./hooks/useWindowSize";
 import useAxiosFetch from "./hooks/useAxiosFetch";
 
+
+const [data, fetchError, isLoading]
+
+
+
 const App = () => {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
